@@ -1,3 +1,4 @@
+# Fake Job Posting Detection App
 # Project charter
 ## Vision
 It is very difficult for students who have just graduated to judge the authenticity of a job posting because they lack experiences in the industry and are disadvantaged under the information asymmetry. Unlike illegal recruitment, fake recruitment often involves a legitimate company, who wants to gather wealth of information about the applicants and the job market as a whole, which can be monetized in multiple ways. This would leak the applicant's information and also waste much of their time. 
