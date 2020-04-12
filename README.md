@@ -1,16 +1,16 @@
 # Fake Job Posting Detection App
-# Project charter
-## Vision
+## Project charter
+### Vision
 It is very difficult for students who have just graduated to judge the authenticity of a job posting because they lack experiences in the industry and are disadvantaged under the information asymmetry. Unlike illegal recruitment, fake recruitment often involves a legitimate company, who wants to gather wealth of information about the applicants and the job market as a whole, which can be monetized in multiple ways. This would leak the applicant's information and also waste much of their time. 
 Therefore, in the project, I am going to develop an app which can help the applicants to determine whether a job posting is fake or real. (Assume that this is an extra function or app for job information providers such Glassdoor or LinkedIn)
 
-## Mission
+### Mission
 To design a web app, which allows users to input the information they have got regarding a job posting and gives them information for their decision based on a machine learning model.
 
 The model will be trained in advance on a dataset that can be find on Kaggle. This link of the dataset is as follows:
 <https://www.kaggle.com/shivamb/real-or-fake-fake-jobposting-prediction>
 
-## Success criteria
+### Success criteria
 The success criteria can be divided into business measures and model performance measures.  
 
 **Business criteria:**  
@@ -21,8 +21,8 @@ The success criteria can be divided into business measures and model performance
 * The accuracy should be greater than 80%  
 * The recall and precision should be both larger than 0.8
 
-# Backlog
-## Initiative 1: Help applicants precisely judge whether a job posting is fake or real
+## Backlog
+### Initiative 1: Help applicants precisely judge whether a job posting is fake or real
 * Epic 1: Construct solid machine learning model candidates which satisfy the performance metrics
 	- Story 1: Plan whether or not to / how to segement the job postings 
 	- Story 2: Engineer features of the posting descriptions
@@ -38,7 +38,7 @@ The success criteria can be divided into business measures and model performance
 	- Story 1: Encapsulate the model application into docker
 	- Story 2: Use could service like RDS and S3 to deploy the application and data
 	
-## Initiative 2: Increase user engagement and app interactivity
+### Initiative 2: Increase user engagement and app interactivity
 * Epic 1: Build user-friendly web app page that reads users' inputs
 	- Story 1: Design structure and framework of the web app
 	- Story 2: Define interface to connect to other application (Model Docker)
@@ -58,7 +58,7 @@ The success criteria can be divided into business measures and model performance
 	- Story 2: Fix bugs
 	- Story 3: Release application
 
-## Backlog
+### Backlog
 
 Initiative1.epic1.story1 (1 of story points) - PLANNED  
 Initiative1.epic1.story2 (4 of story points) - PLANNED  
@@ -86,10 +86,10 @@ Initiative2.epic5.story1 (2 of story points)
 Initiative2.epic5.story2 (2 of story points)  
 Initiative2.epic5.story3 (0 of story points)  
 
-## Icebox
-Initiative2.epic2.story1
-Initiative2.epic3.story1
-Initiative2.epic3.story2
+### Icebox
+Initiative2.epic2.story1  
+Initiative2.epic3.story1  
+Initiative2.epic3.story2  
 
 
 
