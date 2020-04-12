@@ -1,164 +1,94 @@
-# MSiA423 Template Repository
+# Project charter
+## Vision
+It is very difficult for students who have just graduated to judge the authenticity of a job posting because they lack experiences in the industry and are disadvantaged under the information asymmetry. Unlike illegal recruitment, fake recruitment often involves a legitimate company, who wants to gather wealth of information about the applicants and the job market as a whole, which can be monetized in multiple ways. This would leak the applicant's information and also waste much of their time. 
+Therefore, in the project, I am going to develop an app which can help the applicants to determine whether a job posting is fake or real. (Assume that this is an extra function or app for job information providers such Glassdoor or LinkedIn)
 
-<!-- toc -->
+## Mission
+To design a web app, which allows users to input the information they have got regarding a job posting and gives them information for their decision based on a machine learning model.
 
-- [Directory structure](#directory-structure)
-- [Running the app](#running-the-app)
-  * [1. Initialize the database](#1-initialize-the-database)
-    + [Create the database with a single song](#create-the-database-with-a-single-song)
-    + [Adding additional songs](#adding-additional-songs)
-    + [Defining your engine string](#defining-your-engine-string)
-      - [Local SQLite database](#local-sqlite-database)
-  * [2. Configure Flask app](#2-configure-flask-app)
-  * [3. Run the Flask app](#3-run-the-flask-app)
-- [Running the app in Docker](#running-the-app-in-docker)
-  * [1. Build the image](#1-build-the-image)
-  * [2. Run the container](#2-run-the-container)
-  * [3. Kill the container](#3-kill-the-container)
+The model will be trained in advance on a dataset that can be find on Kaggle. This link of the dataset is as follows:
+<https://www.kaggle.com/shivamb/real-or-fake-fake-jobposting-prediction>
 
-<!-- tocstop -->
+## Success criteria
+The success criteria can be divided into business measures and model performance measures.  
 
-## Directory structure 
+**Business criteria:**  
+* User engagement: number of users using the app / visits in an interval of time  
+* Conversion rate: number of users registering as membership / subscribing the company's service     
 
-```
-├── README.md                         <- You are here
-├── api
-│   ├── static/                       <- CSS, JS files that remain static
-│   ├── templates/                    <- HTML (or other code) that is templated and changes based on a set of inputs
-│   ├── boot.sh                       <- Start up script for launching app in Docker container.
-│   ├── Dockerfile                    <- Dockerfile for building image to run app  
-│
-├── config                            <- Directory for configuration files 
-│   ├── local/                        <- Directory for keeping environment variables and other local configurations that *do not sync** to Github 
-│   ├── logging/                      <- Configuration of python loggers
-│   ├── flaskconfig.py                <- Configurations for Flask API 
-│
-├── data                              <- Folder that contains data used or generated. Only the external/ and sample/ subdirectories are tracked by git. 
-│   ├── external/                     <- External data sources, usually reference data,  will be synced with git
-│   ├── sample/                       <- Sample data used for code development and testing, will be synced with git
-│
-├── deliverables/                     <- Any white papers, presentations, final work products that are presented or delivered to a stakeholder 
-│
-├── docs/                             <- Sphinx documentation based on Python docstrings. Optional for this project. 
-│
-├── figures/                          <- Generated graphics and figures to be used in reporting, documentation, etc
-│
-├── models/                           <- Trained model objects (TMOs), model predictions, and/or model summaries
-│
-├── notebooks/
-│   ├── archive/                      <- Develop notebooks no longer being used.
-│   ├── deliver/                      <- Notebooks shared with others / in final state
-│   ├── develop/                      <- Current notebooks being used in development.
-│   ├── template.ipynb                <- Template notebook for analysis with useful imports, helper functions, and SQLAlchemy setup. 
-│
-├── reference/                        <- Any reference material relevant to the project
-│
-├── src/                              <- Source data for the project 
-│
-├── test/                             <- Files necessary for running model tests (see documentation below) 
-│
-├── app.py                            <- Flask wrapper for running the model 
-├── run.py                            <- Simplifies the execution of one or more of the src scripts  
-├── requirements.txt                  <- Python package dependencies 
-```
+**Model criteria:**  
+* The accuracy should be greater than 80%  
+* The recall and precision should be both larger than 0.8
 
-## Running the app
-### 1. Initialize the database 
+# Backlog
+## Initiative 1: Help applicants precisely judge whether a job posting is fake or real
+* Epic 1: Construct solid machine learning model candidates which satisfy the performance metrics
+	- Story 1: Plan whether or not to / how to segement the job postings 
+	- Story 2: Engineer features of the posting descriptions
+	- Story 3: Verify segmentation and analyze the distributions of the features
+	- Story 4: Build machine learning models to train the model
 
-#### Create the database with a single song 
-To create the database in the location configured in `config.py` with one initial song, run: 
+* Epic 2: Select and improve models
+	- Story 1: Define major metrics of the model performance
+	- Story 2: Determine 'best' models based on metrics defined
+	- Story 3: Test segmentation and see if segmentation can improve the model
 
-`python run.py create_db --engine_string=<engine_string> --artist=<ARTIST> --title=<TITLE> --album=<ALBUM>`
+* Epic 3: Application deployment
+	- Story 1: Encapsulate the model application into docker
+	- Story 2: Use could service like RDS and S3 to deploy the application and data
+	
+## Initiative 2: Increase user engagement and app interactivity
+* Epic 1: Build user-friendly web app page that reads users' inputs
+	- Story 1: Design structure and framework of the web app
+	- Story 2: Define interface to connect to other application (Model Docker)
+	- Story 3: Finalize the web page on the host
+	- Story 4: Design and finalize web page style and layout
+* Epic 2: Realize collection of new data
+	- Story 1: Build interface that allows users to update new finds of fake or real job postings to the database
+* Epic 3: Build a user report system that collects users' feedback
+	- Story 1: Build interface that allows users to report whether a prediction is right
+	- Story 2: Build interface that allows users to give feedback to the utility of the app
+* Epic 4: Application deployment
+	- Story 1: Encapsulate the model application into docker
+	- Story 2: Use could service like RDS and S3 to deploy the application and data
+	- Story 3: Finalize connection with model docker and database
+* Epic 5: Test application and release
+	- Story 1: Test the multiple components of the project
+	- Story 2: Fix bugs
+	- Story 3: Release application
 
-By default, `python run.py create_db` creates a database at `sqlite:///data/tracks.db` with the initial song *Radar* by Britney spears. 
-#### Adding additional songs 
-To add an additional song:
+## Backlog
 
-`python run.py ingest --engine_string=<engine_string> --artist=<ARTIST> --title=<TITLE> --album=<ALBUM>`
+Initiative1.epic1.story1 (1 of story points) - PLANNED  
+Initiative1.epic1.story2 (4 of story points) - PLANNED  
+Initiative1.epic1.story3 (2 of story points) - PLANNED  
+Initiative1.epic1.story4 (2 of story points) - PLANNED  
 
-By default, `python run.py ingest` adds *Minor Cause* by Emancipator to the SQLite database located in `sqlite:///data/tracks.db`.
+Initiative1.epic2.story1 (1 of story points) - PLANNED  
+Initiative1.epic2.story2 (2 of story points) - PLANNED  
+Initiative1.epic2.story3 (4 of story points) - PLANNED  
 
-#### Defining your engine string 
-A SQLAlchemy database connection is defined by a string with the following format:
-
-`dialect+driver://username:password@host:port/database`
-
-The `+dialect` is optional and if not provided, a default is used. For a more detailed description of what `dialect` and `driver` are and how a connection is made, you can see the documentation [here](https://docs.sqlalchemy.org/en/13/core/engines.html). We will cover SQLAlchemy and connection strings in the SQLAlchemy lab session on 
-##### Local SQLite database 
-
-A local SQLite database can be created for development and local testing. It does not require a username or password and replaces the host and port with the path to the database file: 
-
-```python
-engine_string='sqlite:///data/tracks.db'
-
-```
-
-The three `///` denote that it is a relative path to where the code is being run (which is from the root of this directory).
-
-You can also define the absolute path with four `////`, for example:
-
-```python
-engine_string = 'sqlite://///Users/cmawer/Repos/2020-MSIA423-template-repository/data/tracks.db'
-```
+Initiative1.epic3.story1 (2 of story points)  
+Initiative1.epic3.story2 (8 of story points)  
 
 
-### 2. Configure Flask app 
+Initiative2.epic1.story1 (2 of story points)  
+Initiative2.epic1.story2 (1 of story points)  
+Initiative2.epic1.story3 (4 of story points)  
+Initiative2.epic1.story4 (4 of story points)  
 
-`config/flaskconfig.py` holds the configurations for the Flask app. It includes the following configurations:
+Initiative2.epic4.story1 (2 of story points)  
+Initiative2.epic4.story2 (4 of story points)  
+Initiative2.epic4.story3 (2 of story points)  
 
-```python
-DEBUG = True  # Keep True for debugging, change to False when moving to production 
-LOGGING_CONFIG = "config/logging/local.conf"  # Path to file that configures Python logger
-HOST = "0.0.0.0" # the host that is running the app. 0.0.0.0 when running locally 
-PORT = 5000  # What port to expose app on. Must be the same as the port exposed in app/Dockerfile 
-SQLALCHEMY_DATABASE_URI = 'sqlite:///data/tracks.db'  # URI (engine string) for database that contains tracks
-APP_NAME = "penny-lane"
-SQLALCHEMY_TRACK_MODIFICATIONS = True 
-SQLALCHEMY_ECHO = False  # If true, SQL for queries made will be printed
-MAX_ROWS_SHOW = 100 # Limits the number of rows returned from the database 
-```
+Initiative2.epic5.story1 (2 of story points)  
+Initiative2.epic5.story2 (2 of story points)  
+Initiative2.epic5.story3 (0 of story points)  
 
-### 3. Run the Flask app 
+## Icebox
+Initiative2.epic2.story1
+Initiative2.epic3.story1
+Initiative2.epic3.story2
 
-To run the Flask app, run: 
 
-```bash
-python app.py
-```
 
-You should now be able to access the app at http://0.0.0.0:5000/ in your browser.
-
-## Running the app in Docker 
-
-### 1. Build the image 
-
-The Dockerfile for running the flask app is in the `app/` folder. To build the image, run from this directory (the root of the repo): 
-
-```bash
- docker build -f app/Dockerfile -t pennylane .
-```
-
-This command builds the Docker image, with the tag `pennylane`, based on the instructions in `app/Dockerfile` and the files existing in this directory.
- 
-### 2. Run the container 
-
-To run the app, run from this directory: 
-
-```bash
-docker run -p 5000:5000 --name test pennylane
-```
-You should now be able to access the app at http://0.0.0.0:5000/ in your browser.
-
-This command runs the `pennylane` image as a container named `test` and forwards the port 5000 from container to your laptop so that you can access the flask app exposed through that port. 
-
-If `PORT` in `config/flaskconfig.py` is changed, this port should be changed accordingly (as should the `EXPOSE 5000` line in `app/Dockerfile`)
-
-### 3. Kill the container 
-
-Once finished with the app, you will need to kill the container. To do so: 
-
-```bash
-docker kill test 
-```
-
-where `test` is the name given in the `docker run` command.
