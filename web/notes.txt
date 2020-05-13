@@ -1,0 +1,7 @@
+docker rm $(docker ps -aq)
+docker image rm -f jobpostweb
+
+
+docker build -f Dockerfile -t jobpostweb .
+
+docker run --mount type=bind,source="$(pwd)"/data,target=/JobpostDetection/web/data --env-file config/database.env jobpostweb db.py --truncate --sampledata --sqlite

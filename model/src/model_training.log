@@ -1,0 +1,9 @@
+2020-05-08 23:22:23,520 model_training INFO     The shape of the data is (17853, 13) 
+2020-05-08 23:22:23,520 model_training INFO     Best: 0.946538942029044 using {'batch_size': 16, 'epochs': 30, 'optimizer': 'adam'}
+2020-05-08 23:22:23,520 model_training INFO     0.945179 (0.063959) with: {'batch_size': 8, 'epochs': 30, 'optimizer': 'sgd'}
+2020-05-08 23:22:23,520 model_training INFO     0.940858 (0.061177) with: {'batch_size': 8, 'epochs': 30, 'optimizer': 'adam'}
+2020-05-08 23:22:23,520 model_training INFO     0.943978 (0.063100) with: {'batch_size': 8, 'epochs': 30, 'optimizer': 'adagrad'}
+2020-05-08 23:22:23,520 model_training INFO     0.944619 (0.063556) with: {'batch_size': 16, 'epochs': 30, 'optimizer': 'sgd'}
+2020-05-08 23:22:23,520 model_training INFO     0.946539 (0.064973) with: {'batch_size': 16, 'epochs': 30, 'optimizer': 'adam'}
+2020-05-08 23:22:23,520 model_training INFO     0.943818 (0.062987) with: {'batch_size': 16, 'epochs': 30, 'optimizer': 'adagrad'}
+

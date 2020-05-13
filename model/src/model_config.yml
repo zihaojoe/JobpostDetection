@@ -1,0 +1,17 @@
+model_tuning:
+    optimizer:
+        - "sgd"
+        - "adam"
+        - "adagrad"
+    epochs: 
+        - 30
+    batch_size:
+        - 8
+        - 16
+    scoring: "accuracy"
+
+model_production:
+    optimizer: "adam"
+    epochs: 30
+    batch_size: 16
+            
