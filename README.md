@@ -120,13 +120,13 @@ vi s3.env
 
 #### 2. Run the Docker to upload data to S3 bucket  
 
-**2.1 Build Docker file**  
+##### 2.1 Build Docker file 
 Go to the root directory of the project, and run:   
 ```bash
 cd model/
 docker build -f Dockerfile -t jobpostmodel .
 ```
-**2.2 Run Docker Container**   
+##### 2.2 Run Docker Container
 Go to the root directory of the project, and run the following to upload data to S3:   
 ```bash
 cd model/
@@ -154,13 +154,13 @@ vi database.env
 
 #### 2. Run the Docker to upload data to S3 bucket  
 
-**2.1 Build Docker file**  
+##### 2.1 Build Docker file 
 Go to the root directory of the project, and run:   
 ```bash
 cd web/
 docker build -f Dockerfile -t jobpostweb .
 ```
-**2.2 Run Docker Container**   
+##### 2.2 Run Docker Container   
 Go to the root directory of the project, and run the following to set up datebase withe the table reported_case:   
 ```bash
 cd web/
