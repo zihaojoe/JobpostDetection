@@ -103,11 +103,11 @@ The success criteria can be divided into business measures and model performance
 
 ## Documentation
 
-
 ## How to run?
 
-### Module: Data Ingestion
-1. Set up environment:   
+### Module 1: Data Ingestion
+#### 1. Set up environment: 
+
 Go to the root directory of the project, and run:
 ```bash
 cd model/config/
@@ -118,22 +118,24 @@ vi s3.env
 * Set `AWS_SECRET_ACCESS_KEY` to the secret access ID of your AWS.
 * Set `AWS_DEFAULT_REGION` to the default region of your AWS.
 
-2. Run the Docker to upload data to S3 bucket  
-**Build Docker file**  
+#### 2. Run the Docker to upload data to S3 bucket  
+
+**2.1 Build Docker file**  
 Go to the root directory of the project, and run:   
 ```bash
 cd model/
 docker build -f Dockerfile -t jobpostmodel .
 ```
-**Run Docker Container**   
+**2.2 Run Docker Container**   
 Go to the root directory of the project, and run the following to upload data to S3:   
 ```bash
 cd model/
 docker run --mount type=bind,source="$(pwd)"/data,target=/JobpostDetection/model/data --env-file config/s3.env jobpostmodel upload_data.sh
 ```
 
-### Module: Data Base Set up
-1. Set up environment:   
+### Module 2: Data Base Set up
+#### 1. Set up environment:   
+
 Go to the root directory of the project, and run:
 ```bash
 cd web/config/
@@ -146,24 +148,25 @@ vi database.env
 * Set `DATABASE_NAME` to the name of the database you want to operate in.
 * Set `SQLITE` to the host name for the sqlite base. 
 
-**Notice** 
+**Notice:** 
 * If you want to use MySQL, ignore the `SQLITE` variable. On the contrast, if you want to use SQLite, just set `SQLITE` and ignore all the others.
 * Verify that you are on the northwestern vpn before you continue on with MySQL
 
-2. Run the Docker to upload data to S3 bucket  
-**Build Docker file**  
+#### 2. Run the Docker to upload data to S3 bucket  
+
+**2.1 Build Docker file**  
 Go to the root directory of the project, and run:   
 ```bash
 cd web/
 docker build -f Dockerfile -t jobpostweb .
 ```
-**Run Docker Container**   
+**2.2 Run Docker Container**   
 Go to the root directory of the project, and run the following to set up datebase withe the table reported_case:   
 ```bash
 cd web/
 docker run --mount type=bind,source="$(pwd)"/data,target=/JobpostDetection/web/data --env-file config/database.env jobpostweb db.py
 ```
-**Notice: you can provide up to 3 parameters to the docker run command** 
+**Notice: you can provide up to 3 parameters to the docker run command**     
 --truncate: If given, delete current records from reported_case table before creating reported_case table.  
 --sampledata:  If given, add a sample record after creating the reported_case table.  
 --sqlite: If given, connect to local sqlite rather than mysql on RDS.  
@@ -174,6 +177,7 @@ docker run --mount type=bind,source="$(pwd)"/data,target=/JobpostDetection/web/d
 ```
 
 ## Repo Structure
+```
 JobpostDetection
 ├─ .DS_Store
 ├─ README.md
@@ -229,3 +233,4 @@ JobpostDetection
        ├─ notes.txt
        ├─ requirements.txt
        └─ run_mysql_client.sh
+```
