@@ -14,5 +14,5 @@ COPY ./upload_data.sh /JobpostDetection/model/upload_data.sh
 
 WORKDIR /JobpostDetection/model
 
-ENTRYPOINT ["sh"]
+ENTRYPOINT [""]
 

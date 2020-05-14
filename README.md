@@ -113,10 +113,10 @@ Go to the root directory of the project, and run:
 cd model/config/
 vi s3.env
 ```
-* Set `MY_BUCKET` to the name of the bucket you want to put files in.
+* Set `MY_BUCKET` to the name of the bucket you want to connect. You can also add path to the bucket. Defaults to `nw-joe-s3/data/`.
 * Set `AWS_ACCESS_KEY_ID` to the access ID of your AWS.
 * Set `AWS_SECRET_ACCESS_KEY` to the secret access ID of your AWS.
-* Set `AWS_DEFAULT_REGION` to the default region of your AWS.
+* Set `AWS_DEFAULT_REGION` to the default region of your AWS. Defaults to `us-east-2`. 
 
 #### 2. Run the Docker to upload data to S3 bucket  
 
@@ -130,7 +130,7 @@ docker build -f Dockerfile -t jobpostmodel .
 Go to the root directory of the project, and run the following to upload data to S3:   
 ```bash
 cd model/
-docker run --mount type=bind,source="$(pwd)"/data,target=/JobpostDetection/model/data --env-file config/s3.env jobpostmodel upload_data.sh
+docker run --mount type=bind,source="$(pwd)"/data,target=/JobpostDetection/model/data --env-file config/s3.env jobpostmodel sh upload_data.sh
 ```
 
 ### Module 2: Data Base Set up
@@ -143,14 +143,16 @@ vi database.env
 ```
 * Set `MYSQL_USER` to the "master username" that you used to create the database server.
 * Set `MYSQL_PASSWORD` to the "master password" that you used to create the database server.
-* Set `MYSQL_HOST` to be the RDS instance endpoint from the console.
+* Set `MYSQL_HOST` to be the RDS instance endpoint from the console. Defaults to `nw-msia423-joe.c7e9ftl52ogd.us-east-2.rds.amazonaws.com`.
 * Set `MYSQL_HOST` to be `3306`.
-* Set `DATABASE_NAME` to the name of the database you want to operate in.
-* Set `SQLITE` to the host name for the sqlite base. 
+* Set `DATABASE_NAME` to the name of the database you want to operate in. Defaults to `msia423_project_db`. 
+* Set `SQLITE` to the host name for the sqlite base. Defaults to `///data/msia423_project_db.db`.
 
 **Notice:** 
-* If you want to use MySQL, ignore the `SQLITE` variable. On the contrast, if you want to use SQLite, just set `SQLITE` and ignore all the others.
-* Verify that you are on the northwestern vpn before you continue on with MySQL
+* If you want to use MySQL, you can ignore the `SQLITE` variable. On the contrast, if you want to use SQLite, just set `SQLITE` and ignore all the others.
+* Verify that you are on the northwestern vpn before you continue on with MySQL.
+* Follow the following docker commands to differentiate between local SQLite and MySQL.
+* You can use `MYSQL_USER=msia423instructor` and `MYSQL_PASSWORD=zzu8431` to perform queries to the table. 
 
 #### 2. Run the Docker to upload data to S3 bucket  
 
@@ -171,7 +173,7 @@ docker run --mount type=bind,source="$(pwd)"/data,target=/JobpostDetection/web/d
 --sampledata:  If given, add a sample record after creating the reported_case table.  
 --sqlite: If given, connect to local sqlite rather than mysql on RDS.  
 
-For example, run the following to create database and truncate table in sqlite:
+For example, run the following to create database and truncate table in sqlite:    
 ```bash
 docker run --mount type=bind,source="$(pwd)"/data,target=/JobpostDetection/web/data --env-file config/database.env jobpostweb db.py --truncate --sqlite
 ```
