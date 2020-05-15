@@ -153,10 +153,6 @@ vi database.env
 * Verify that you are on the northwestern vpn before you continue on with MySQL.
 * Follow the following docker commands to differentiate between local SQLite and MySQL.
 
-**For Different Users:**
-* For instructor, you can use `MYSQL_USER=msia423instructor` and `MYSQL_PASSWORD=zzu8431` to perform queries to the table. 
-* For QA, you can use `MYSQL_USER=msia423qa` and `MYSQL_PASSWORD=zzu8431` to perform queries to the table. 
-
 #### 2. Run the Docker to upload data to S3 bucket  
 
 ##### 2.1 Build Docker file 
@@ -181,61 +177,54 @@ For example, run the following to create database and truncate table in sqlite:
 docker run --mount type=bind,source="$(pwd)"/data,target=/JobpostDetection/web/data --env-file config/database.env jobpostweb db.py --truncate --sqlite
 ```
 
+**How do query data?**
+* For instructor, you can use `MYSQL_USER=msia423instructor` and `MYSQL_PASSWORD=zzu8431` to perform queries to the table. 
+* For QA, you can use `MYSQL_USER=msia423qa` and `MYSQL_PASSWORD=zzu8431` to perform queries to the table. 
+
 ## Repo Structure
 ```
 JobpostDetection
-├─ .DS_Store
-├─ README.md
-├─ model
-│    ├─ .DS_Store
-│    ├─ Dockerfile
-│    ├─ config
-│    │    ├─ logging.conf
-│    │    └─ s3.env
-│    ├─ data
-│    │    ├─ .DS_Store
-│    │    ├─ jobposting.csv
-│    │    └─ jobposting_cleaned.csv
-│    ├─ model
-│    │    ├─ .DS_Store
-│    │    ├─ OH_file.pickle
-│    │    ├─ SD_file.pickle
-│    │    ├─ model_file.pickle
-│    │    └─ vec_file.pickle
-│    ├─ nltk_data
-│    │    ├─ .DS_Store
-│    │    ├─ corpora
-│    │    └─ taggers
-│    ├─ notes.txt
-│    ├─ requirements copy.txt
-│    ├─ requirements.txt
-│    ├─ src
-│    │    ├─ .DS_Store
-│    │    ├─ DataCleaning.py
-│    │    ├─ FeatureEngineering.py
-│    │    ├─ FeatureEngineeringPred.py
-│    │    ├─ ModelDump.py
-│    │    ├─ ModelPredict.py
-│    │    ├─ ModelTraining.py
-│    │    ├─ __pycache__
-│    │    ├─ config.py
-│    │    ├─ model_config.yml
-│    │    └─ model_training.log
-│    └─ upload_data.sh
-└─ web
-       ├─ .DS_Store
-       ├─ .mysqlconfig
-       ├─ Dockerfile
-       ├─ config
-       │    ├─ .DS_Store
-       │    ├─ database.env
-       │    └─ logging.conf
-       ├─ data
-       │    ├─ .DS_Store
-       │    └─ data.db
-       ├─ db.py
-       ├─ mysql_database.log
-       ├─ notes.txt
-       ├─ requirements.txt
-       └─ run_mysql_client.sh
+├── README.md
+├── model
+│   ├── Dockerfile
+│   ├── config
+│   │   ├── logging.conf
+│   │   └── s3.env
+│   ├── data
+│   │   ├── jobposting.csv
+│   │   └── jobposting_cleaned.csv
+│   ├── model
+│   │   ├── OH_file.pickle
+│   │   ├── SD_file.pickle
+│   │   ├── model_file.pickle
+│   │   └── vec_file.pickle
+│   ├── nltk_data
+│   │   ├── corpora
+│   │   │   ├── stopwords
+│   │   │   └── wordnet
+│   │   └── taggers
+│   │       └── averaged_perceptron_tagger
+│   │           └── averaged_perceptron_tagger.pickle
+│   ├── requirements.txt
+│   ├── src
+│   │   ├── DataCleaning.py
+│   │   ├── FeatureEngineering.py
+│   │   ├── FeatureEngineeringPred.py
+│   │   ├── ModelDump.py
+│   │   ├── ModelPredict.py
+│   │   ├── ModelTraining.py
+│   │   ├── config.py
+│   │   ├── model_config.yml
+│   │   └── model_training.log
+│   └── upload_data.sh
+└── web
+    ├── Dockerfile
+    ├── config
+    │   ├── database.env
+    │   └── logging.conf
+    ├── data
+    │   └── msia423_project_db.db
+    ├── db.py
+    ├── mysql_database.log
+    └── requirements.txt
 ```
