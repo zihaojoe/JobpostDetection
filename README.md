@@ -177,7 +177,7 @@ For example, run the following to create database and truncate table in sqlite:
 docker run --mount type=bind,source="$(pwd)"/data,target=/JobpostDetection/web/data --env-file config/database.env jobpostweb db.py --truncate --sqlite
 ```
 
-**How do query data?**
+##### 2.3 Query data
 * For instructor, you can use `MYSQL_USER=msia423instructor` and `MYSQL_PASSWORD=zzu8431` to perform queries to the table. 
 * For QA, you can use `MYSQL_USER=msia423qa` and `MYSQL_PASSWORD=zzu8431` to perform queries to the table. 
 
