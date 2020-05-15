@@ -152,7 +152,10 @@ vi database.env
 * If you want to use MySQL, you can ignore the `SQLITE` variable. On the contrast, if you want to use SQLite, just set `SQLITE` and ignore all the others.
 * Verify that you are on the northwestern vpn before you continue on with MySQL.
 * Follow the following docker commands to differentiate between local SQLite and MySQL.
-* You can use `MYSQL_USER=msia423instructor` and `MYSQL_PASSWORD=zzu8431` to perform queries to the table. 
+
+**For Different Users:**
+* For instructor, you can use `MYSQL_USER=msia423instructor` and `MYSQL_PASSWORD=zzu8431` to perform queries to the table. 
+* For QA, you can use `MYSQL_USER=msia423qa` and `MYSQL_PASSWORD=zzu8431` to perform queries to the table. 
 
 #### 2. Run the Docker to upload data to S3 bucket  
 
