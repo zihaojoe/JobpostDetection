@@ -106,6 +106,8 @@ The success criteria can be divided into business measures and model performance
 ## How to run?
 
 ### Module 1: Data Ingestion
+The dataset can be downloaded from [Kaggle](https://www.kaggle.com/shivamb/real-or-fake-fake-jobposting-prediction). It contains 17880 job posting records and is around 50MB in size. The dataset is downloaded to JobpostDetection/model/jobposting.csv
+
 #### 1. Set up environment: 
 
 Go to the root directory of the project, and run:
@@ -113,7 +115,7 @@ Go to the root directory of the project, and run:
 cd model/config/
 vi s3.env
 ```
-* Set `MY_BUCKET` to the name of the bucket you want to connect. You can also add path to the bucket. Defaults to `nw-joe-s3/data/`.
+* Set `MY_BUCKET` to the name of the bucket you want to connect. You can also add path to the bucket name where you want to save your data, such as `bucketname/path/data.csv`. Defaults to `nw-joe-s3/data/`.
 * Set `AWS_ACCESS_KEY_ID` to the access ID of your AWS.
 * Set `AWS_SECRET_ACCESS_KEY` to the secret access ID of your AWS.
 * Set `AWS_DEFAULT_REGION` to the default region of your AWS. Defaults to `us-east-2`. 
@@ -162,9 +164,8 @@ cd web/
 docker build -f Dockerfile -t jobpostweb .
 ```
 ##### 2.2 Run Docker Container   
-Go to the root directory of the project, and run the following to set up datebase withe the table reported_case:   
+Stay in the web/, and run the following to set up datebase withe the table reported_case:   
 ```bash
-cd web/
 docker run --mount type=bind,source="$(pwd)"/data,target=/JobpostDetection/web/data --env-file config/database.env jobpostweb db.py
 ```
 **Notice: you can provide up to 3 parameters to the docker run command**     
