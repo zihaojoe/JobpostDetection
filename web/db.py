@@ -85,8 +85,8 @@ if __name__ == "__main__":
 	# If "sampledata" is given as an argument (i.e. python models.py --sampledata), then empty the reported_case table)
 	if args.sampledata:
 		# add a sample record
-		sample = Reported_case(telecommuting=0, has_company_logo=1, has_questions=0, employment_type="Full-time", 
-			required_experience="Bachelor", industry="Other", function="Other", fraudulent=0, country="Other", 
+		sample = Reported_case(telecommuting=0, has_company_logo=1, has_questions=0, employment_type="Full-time", required_education="Bachelor",
+			required_experience="Internship", industry="Other", function="Other", fraudulent=0, country="Other", 
 			salary_low=500, salary_high=1000, text="This is a good company!")
 		session.add(sample)
 		session.commit()

@@ -7,7 +7,7 @@
 ## Project charter
 ### Vision
 It is very difficult for students who have just graduated to judge the authenticity of a job posting because they lack experiences in the industry and are disadvantaged under the information asymmetry. Unlike illegal recruitment, fake recruitment often involves a legitimate company, who wants to gather wealth of information about the applicants and the job market as a whole, which can be monetized in multiple ways. This would leak the applicant's information and also waste much of their time. 
-Therefore, in the project, I am going to develop an app which can help the applicants to determine whether a job posting is fake or real. (Assume that this is an extra function or app for job information providers such Glassdoor or LinkedIn)
+Therefore, in the project, I am going to develop an app which can give prediction of whether a job posting is fake or real for the applicants. This is can be integrated as an extra function or app for job information providers such Glassdoor or LinkedIn.
 
 ### Mission
 To design a web app, which allows users to input the information they have got regarding a job posting and gives them information for their decision based on a machine learning model.
@@ -23,8 +23,9 @@ The success criteria can be divided into business measures and model performance
 * Conversion rate: number of users registering as membership / subscribing the company's service     
 
 **Model criteria:**  
-* The accuracy should be greater than 80%  
-* The recall and precision should be both larger than 0.8
+* The accuracy should be greater than 90%  
+* The precision should be larger than 0.8
+* The recall should be larger than 0.5
 
 ## Backlog
 
@@ -122,7 +123,7 @@ vi s3.env
 
 #### 2. Run the Docker to upload data to S3 bucket  
 
-##### 2.1 Build Docker file 
+##### 2.1 Build Docker image 
 Go to the root directory of the project, and run:   
 ```bash
 cd model/
@@ -135,7 +136,7 @@ cd model/
 docker run --mount type=bind,source="$(pwd)"/data,target=/JobpostDetection/model/data --env-file config/s3.env jobpostmodel sh upload_data.sh
 ```
 
-### Module 2: Data Base Set up
+### Module 2: Database Set up
 #### 1. Set up environment:   
 
 Go to the root directory of the project, and run:
@@ -157,16 +158,15 @@ vi database.env
 
 #### 2. Run the Docker to upload data to S3 bucket  
 
-##### 2.1 Build Docker file 
+##### 2.1 Build Docker image 
 Go to the root directory of the project, and run:   
 ```bash
-cd web/
 docker build -f Dockerfile -t jobpostweb .
 ```
 ##### 2.2 Run Docker Container   
-Stay in the web/, and run the following to set up datebase withe the table reported_case:   
+Stay in the root directory, and run the following to set up datebase withe the table reported_case:   
 ```bash
-docker run --mount type=bind,source="$(pwd)"/data,target=/JobpostDetection/web/data --env-file config/database.env jobpostweb db.py
+docker run --mount type=bind,source="$(pwd)"/web/data,target=/JobpostDetection/web/data --env-file web/config/database.env jobpostweb python3 db.py
 ```
 **Notice: you can provide up to 3 parameters to the docker run command**     
 --truncate: If given, delete current records from reported_case table before creating reported_case table.  
@@ -175,12 +175,84 @@ docker run --mount type=bind,source="$(pwd)"/data,target=/JobpostDetection/web/d
 
 For example, run the following to create database and truncate table in sqlite:    
 ```bash
-docker run --mount type=bind,source="$(pwd)"/data,target=/JobpostDetection/web/data --env-file config/database.env jobpostweb db.py --truncate --sqlite
+docker run --mount type=bind,source="$(pwd)"/web/data,target=/JobpostDetection/web/data --env-file web/config/database.env jobpostweb python3 db.py --truncate --sqlite
 ```
 
 ##### 2.3 Query data
 * For instructor, you can use `MYSQL_USER=msia423instructor` and `MYSQL_PASSWORD=zzu8431` to perform queries to the table. 
 * For QA, you can use `MYSQL_USER=msia423qa` and `MYSQL_PASSWORD=zzu8431` to perform queries to the table. 
+
+### Module 3: Build the model
+##### 3.1 Build Docker image (If you have built it in Module 1, just skip this step).
+Go to the root directory of the project, and run: 
+```bash
+cd model/
+```
+Notice: All the following command of this part should be run under model 
+```bash
+docker build -f Dockerfile -t jobpostmodel .
+```
+
+##### 3.2 Run the model generation pipeline
+```bash
+docker run --mount type=bind,source="$(pwd)",target=/JobpostDetection/model --env-file config/s3.env jobpostmodel sh pipeline.sh
+```
+
+##### 3.3 Build the model step-by-step (Reference Only)
+###### 3.3.1 Download data
+Run the following command to download data from S3 (previously uploaded in module 1). You can skip this if you've already had the data in the data folder. 
+```bash
+docker run --mount type=bind,source="$(pwd)",target=/JobpostDetection/model --env-file config/s3.env jobpostmodel sh download_data.sh
+```
+
+###### 3.3.2 Data Cleaning
+Run the following command to clean the data. Since it may take hours to parse the text, the cleaned data has been uploaded to S3 and you want to download it using the command in 3.2. Once you have downloaded, you can skip the following command.
+```bash
+docker run --mount type=bind,source="$(pwd)",target=/JobpostDetection/model/ jobpostmodel python3 src/DataCleaning.py 
+```
+
+###### 3.3.3 Model Training
+Run the following command to train the models (model parameters are in model_config.yml), and find the best model. Model performance is saved to src/model_training.log.
+```bash
+docker run --mount type=bind,source="$(pwd)",target=/JobpostDetection/model/ jobpostmodel python3 src/ModelTraining.py 
+```
+
+###### 3.3.4 Model Dumping
+Run the following command to train the best model (model parameters are in model_config.yml) and save it to file.
+```bash
+docker run --mount type=bind,source="$(pwd)",target=/JobpostDetection/model/ jobpostmodel python3 src/ModelDump.py 
+```
+
+##### 3.4 Model Unit Test
+Run the following command to conduct unit test.
+```bash
+docker run --mount type=bind,source="$(pwd)",target=/JobpostDetection/model/ jobpostmodel pytest unit_test/
+```
+
+### Module 4: Run the App
+##### 4.1 Build Docker image (If you have built it in Module 2, just skip this step).
+```bash
+docker build -f Dockerfile -t jobpostweb .
+```
+##### 4.2 Run the app in the backend
+Go to the root directory of the project, and run: 
+```bash
+docker run -p 5000:5000 --mount type=bind,source="$(pwd)"/web/data,target=/JobpostDetection/web/data --env-file web/config/database.env jobpostweb python3 app.py --sqlite
+```
+
+**Notice: you can provide up to 1 parameters to the docker run command** 
+--sqlite: If given, connect to local sqlite rather than mysql on RDS. If not given, connect to RDS MySQL. (Need to be connected to Northwestern VPN)
+
+##### 4.3 Check the web app
+You should now be able to access the app at <http://0.0.0.0:5000/> in your browser.
+
+### Module 5: Kill the container
+
+Once finished with the app, you will need to kill the container. To do so: 
+```bash
+docker kill test 
+```
+where `test` is the name given in the `docker run` command.
 
 ## Repo Structure
 ```

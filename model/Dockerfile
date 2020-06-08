@@ -10,7 +10,7 @@ RUN pip3 install --upgrade pip
 RUN pip3 install -r requirements.txt
 RUN pip3 install awscli --upgrade
 
-COPY ./upload_data.sh /JobpostDetection/model/upload_data.sh
+COPY . /JobpostDetection/model
 
 WORKDIR /JobpostDetection/model
 

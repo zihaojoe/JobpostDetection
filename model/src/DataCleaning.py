@@ -8,88 +8,113 @@ from nltk.stem import LancasterStemmer,WordNetLemmatizer
 from nltk.corpus import stopwords, wordnet
 import os
 import config
-nltk.data.path.append(config.PROJECT_HOME+'/nltk_data')
 
-data = pd.read_csv(config.PROJECT_HOME+"/data/jobposting.csv")
-data.drop(['job_id','department'],axis=1,inplace=True)
+# drop useless columns
+def drop_useless(df, useless_cols=None):
+    """ Drop useless columns
+    Args:
+        df (`DataFrame`): DataFrame before dropping useless columns
+        useless_cols (`list`): Columns that need to be dropped. Defaults to None
+    Returns:
+        data (`DataFrame`): DataFrame after dropping useless column
+    """
+    data = df.copy()
+    data.drop(useless_cols,axis=1,inplace=True)
+    return data
 
-#-------------------#
-# country
-#-------------------#
-# create a new column - country_US, containing one of the 3 values: 'US', 'Other', and na
-country = [np.nan if type(ls)==float else ls[0] for ls in data['location'].str.split(',')]
-data['country'] = country
-data.loc[(data['country']!='US')&(~data['country'].isna()),['country']] = 'Other'
-data.loc[data['country'].isna(),['country']] = 'Unknown'
-data.drop(['location'],axis=1,inplace=True)
-
-#---------------------------------------------------------------------------------#
-# employment_type, required_experience, required_education, function, industry
-#---------------------------------------------------------------------------------#
 # fillna of ['employment_type', 'required_experience', 'required_education','industry','function']
-fillna_cols = ['required_education','employment_type','required_experience','industry','function']
-for col in fillna_cols:
-    data[col].fillna('Unspecified',inplace=True)
+def imputation(df, fillna_cols=None):
+    """ Imputation
+    Args:
+        df (`DataFrame`): DataFrame before imputation
+        fillna_cols (`list`): Columns that need to be imputated. Defaults to None
+    Returns:
+        data (`DataFrame`): DataFrame after imputation
+    """
+    data = df.copy()
+    for col in fillna_cols:
+        data[col].fillna('Unspecified',inplace=True)
+    return data
 
-# combining minorities of required_education
-edu_higher = ('Master\'s Degree','Doctorate')
-data.loc[data['required_education'].isin(edu_higher),'required_education'] = 'Master or higher'
-edu_bachelor = ('Bachelor\'s Degree','Some College Coursework Completed')
-data.loc[data['required_education'].isin(edu_bachelor),'required_education'] = 'Bachelor'
-edu_other = ('Vocational','Vocational - Degree','Vocational - HS Diploma',
-             'Professional','Some High School Coursework')
-data.loc[data['required_education'].isin(edu_other),'required_education'] = 'Other'
+def feature_engineering(df):
+    """ Engineering feature
+    Args:
+        df (`DataFrame`): DataFrame before engineering feature
+    Returns:
+        data (`DataFrame`): DataFrame after engineering feature
+    """
+    # create a new column - country_US, containing one of the 3 values: 'US', 'Other', and na
+    data = df.copy()
+    country = [np.nan if type(ls)==float else ls[0] for ls in data['location'].str.split(',')]
+    data['country'] = country
+    data.loc[(data['country']!='US')&(~data['country'].isna()),['country']] = 'Other'
+    data.loc[data['country'].isna(),['country']] = 'Unknown'
+    data.drop(['location'],axis=1,inplace=True)
 
-# combining minorities of required_experience
-data.loc[data['required_experience']=='Not Applicable','required_experience'] = 'Unspecified'
+    # combining minorities of required_education
+    edu_higher = ('Master\'s Degree','Doctorate')
+    data.loc[data['required_education'].isin(edu_higher),'required_education'] = 'Master or higher'
+    edu_bachelor = ('Bachelor\'s Degree','Some College Coursework Completed')
+    data.loc[data['required_education'].isin(edu_bachelor),'required_education'] = 'Bachelor'
+    edu_other = ('Vocational','Vocational - Degree','Vocational - HS Diploma',
+                 'Professional','Some High School Coursework')
+    data.loc[data['required_education'].isin(edu_other),'required_education'] = 'Other'
 
-# industry
-# combining minorities of industry, counts < 500
-tmp = data['industry'].value_counts()
-data.loc[data['industry'].isin(tmp[(tmp<500)].index),'industry'] = 'Other'
+    # combining minorities of required_experience
+    data.loc[data['required_experience']=='Not Applicable','required_experience'] = 'Unspecified'
 
-# function
-# combining minorities of function, counts < 300
-tmp = data['function'].value_counts()
-data.loc[data['function'].isin(tmp[(tmp<300)].index),'function'] = 'Other'
+    # industry
+    # combining minorities of industry, counts < 500
+    tmp = data['industry'].value_counts()
+    data.loc[data['industry'].isin(tmp[(tmp<500)].index),'industry'] = 'Other'
 
-#-------------------#
-# salary
-#-------------------#
-# salary range
-# clean salary column
-salary = data['salary_range'].str.split('-')
-drop_ix = []
-for ix in salary[-salary.isna()].index:
-    try:
-        float(salary[ix][1])
-        float(salary[ix][0])
-    except:
-        drop_ix.append(ix)
-data.drop(drop_ix,axis=0,inplace=True)
+    # function
+    # combining minorities of function, counts < 300
+    tmp = data['function'].value_counts()
+    data.loc[data['function'].isin(tmp[(tmp<300)].index),'function'] = 'Other'
 
-# split into low and high columns
-salary = data['salary_range'].str.split('-')
-salary_low = [np.nan if (type(ls)!=list) else float(ls[0]) for ls in salary]
-salary_high = [np.nan if (type(ls)!=list) else float(ls[1]) for ls in salary]
-data['salary_low'] = salary_low
-data['salary_high'] = salary_high
-data.drop('salary_range',axis=1,inplace=True)
+    # salary range
+    # clean salary column
+    salary = data['salary_range'].str.split('-')
+    drop_ix = []
+    for ix in salary[-salary.isna()].index:
+        try:
+            float(salary[ix][1])
+            float(salary[ix][0])
+        except:
+            drop_ix.append(ix)
+    data.drop(drop_ix,axis=0,inplace=True)
 
-# fillna
-data['salary_low'].fillna(0,inplace=True)
-data['salary_high'].fillna(0,inplace=True)
+    # split into low and high columns
+    salary = data['salary_range'].str.split('-')
+    salary_low = [np.nan if (type(ls)!=list) else float(ls[0]) for ls in salary]
+    salary_high = [np.nan if (type(ls)!=list) else float(ls[1]) for ls in salary]
+    data['salary_low'] = salary_low
+    data['salary_high'] = salary_high
+    data.drop('salary_range',axis=1,inplace=True)
 
-#-----------------------------------------#
-# Text columns create and clean
-#-----------------------------------------#
-# create text column: combining ['title','company_profile', 'description', 'requirements', 'benefits']
-text_cols = ['title','company_profile', 'description', 'requirements', 'benefits']
-for col in text_cols:
-    data[col].fillna(' ', inplace=True)
+    # fillna
+    data['salary_low'].fillna(0,inplace=True)
+    data['salary_high'].fillna(0,inplace=True)
 
-data['text'] = data[text_cols].apply(lambda x: ' '.join(x), axis=1)
-data.drop(text_cols, axis=1, inplace=True)
+    return data
+
+# create text columns: combining ['title','company_profile', 'description', 'requirements', 'benefits']
+def create_text_column(df, text_cols=None):
+    """ Create text columns
+    Args:
+        df (`DataFrame`): DataFrame before combining text columns
+        text_cols (`list`): Columns that need to be combined. Defaults to None
+    Returns:
+        data (`DataFrame`): DataFrame after combining text columns
+    """
+    data = df.copy()
+    for col in text_cols:
+        data[col].fillna(' ', inplace=True)
+
+    data['text'] = data[text_cols].apply(lambda x: ' '.join(x), axis=1)
+    data.drop(text_cols, axis=1, inplace=True)
+    return data
 
 # remove unuseful characters 
 # pos_tag search path: /Users/JoeCheung/nltk_data
@@ -105,8 +130,6 @@ def text_clean(text):
     text = re.sub('[%s]' % re.escape(string.punctuation), '', text)   # delete punctuation
     text = re.sub('\n', '', text)   # remove carriage return
     return text
-
-data['text'] = data['text'].apply(lambda x: text_clean(x))
 
 def get_word_type(tag):
     """Get the part of speech of the word from its tag
@@ -145,12 +168,67 @@ def text_lemmatize(text):
             text_lemmatized.append(word_lemmatized)
     return " ".join(text_lemmatized)  
 
-# data['text'] = data['text'].apply(lambda x: text_lemmatize(x))
-for i in range(len(data)):
-    try:
-        data.loc[i,'text'] = text_lemmatize(data.loc[i,'text'])
-    except Exception as e:
-        print(i)
-        continue
+def data_cleaning(df, useless_cols=None, fillna_cols=None, text_cols=None, output=True):
+    """Conduct data cleaning process
+    Args:
+        df (`DataFrame`): DataFrame before cleaning
+        useless_cols (`list`): Columns that need to be dropped. Defaults to None
+        fillna_cols (`list`): Columns that need to be imputated. Defaults to None
+        text_cols (`list`): Columns that need to be combined. Defaults to None
+        output (`bool`): Whether writing result to file. Defaults to True
+    Returns:
+        data (`DataFrame`): DataFrame after cleaning
+    """
 
-data.to_csv(config.PROJECT_HOME+"/data/jobposting_cleaned.csv",index=False)
+    data = df.copy()
+    nltk.data.path.append(config.PROJECT_HOME+'/model/nltk_data/')
+    useless_cols_default = ['job_id','department']
+    fillna_cols_default = ['required_education','employment_type','required_experience','industry','function']
+    text_cols_default = ['title','company_profile', 'description', 'requirements', 'benefits']
+
+    # drop useless data
+    if useless_cols == None:
+        useless_cols = useless_cols_default.copy()
+    tmp = set(useless_cols)-set(useless_cols_default)
+    useless_cols = list(set(useless_cols)-tmp)
+    if len(tmp) > 0:
+        data.drop(list(tmp),axis=1,inplace=True)
+    data = drop_useless(data, useless_cols)
+
+    # imputation
+    if fillna_cols == None:
+        fillna_cols = fillna_cols_default.copy()
+    tmp = set(fillna_cols)-set(fillna_cols_default)
+    fillna_cols = list(set(fillna_cols)-tmp)
+    if len(tmp) > 0:
+        data.drop(list(tmp),axis=1,inplace=True)
+    data = imputation(data, fillna_cols)
+
+    # feature engineering
+    data = feature_engineering(data)
+
+    # create text column
+    if text_cols == None:
+        text_cols = text_cols_default.copy()
+    tmp = set(text_cols)-set(text_cols_default)
+    text_cols = list(set(text_cols)-tmp)
+    if len(tmp) > 0:
+        data.drop(list(tmp),axis=1,inplace=True)
+    data = create_text_column(data, text_cols)
+
+    # engineering text column
+    for i in range(len(data)):
+        try:
+            data.loc[i,'text'] = text_lemmatize(data.loc[i,'text'])
+        except Exception as e:
+            print(i)
+            continue
+
+    if output:
+        data.to_csv(config.DATA_CLEANED_PATH, index=False)
+
+    return data
+
+if __name__ ==  "__main__":
+    data = pd.read_csv(config.DATA_PATH)
+    data_cleaning(data)

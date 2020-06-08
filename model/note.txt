@@ -1,0 +1,6 @@
+docker rm $(docker ps -aq) 
+docker image rm -f jobpostmodel
+
+docker build -f Dockerfile -t jobpostmodel .
+
+docker run --mount type=bind,source="$(pwd)",target=/JobpostDetection/model/ jobpostmodel python3 src/DataCleaning.py 

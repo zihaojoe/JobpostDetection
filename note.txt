@@ -1,0 +1,10 @@
+docker rm $(docker ps -aq) 
+docker image rm -f jobpostweb
+
+docker run --mount type=bind,source="$(pwd)"/data,target=/JobpostDetection/web/data --env-file config/database.env jobpostweb db.py --sqlite --sampledata
+
+test case:
+0,1,1,Full-time,Mid-Senior level,Certification,Other,Other,US,0,0,technician instrument control edison international refine resource partner effort streamline hire process provide efficient effective recruitng model focus help develop achieve career goal make solid geographical cultural professional fiit leverage career new excite professional ventureplease direct communication hr
+
+
+senior engineering product manager aptitude staff solution redesign recruiting wheel innovative new platform cut recruiting time half yield scientificallyproven result client candidate enjoy pleasant experience advanced simple use technology tenure industryexperienced recruiting team join u fresh new experience leverage careerthe way represent candidate enjoy follow perksexpert negotiation maximize total compensation package signing bonus aptitude staff addition client signing bonus applicable1 year access anyperkrelocation service town candidatescontinued education area profession seminar 

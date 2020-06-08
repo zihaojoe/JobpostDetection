@@ -2,10 +2,12 @@ import config
 import logging
 import logging.config
 import yaml
+import os
 import numpy as np
 import pandas as pd
 import FeatureEngineering as FE
 import keras
+import tensorflow as tf
 from keras.layers import Dense
 from keras.models import Sequential,load_model
 from keras.wrappers import scikit_learn
@@ -15,11 +17,14 @@ from sklearn.metrics import classification_report, confusion_matrix, accuracy_sc
 def create_model(input_dim=0, optimizer='adam'):
     """ Create keras model
     Args:
-        input_dim (int): Input dimension, number of features
-        optimizer (str): The opimization method of the model
+        input_dim (`int`): Input dimension, number of features
+        optimizer (`str`): The opimization method of the model
     Returns:
-        model (keras model object): A built keras model
+        model (`keras model object`): A built keras model
     """
+    np.random.seed(423)
+    tf.random.set_seed(423)
+    
     model = Sequential()
     model.add(Dense(units = 64 , activation = 'relu' , input_dim = input_dim))
     model.add(Dense(units = 32 , activation = 'relu'))
@@ -30,12 +35,15 @@ def create_model(input_dim=0, optimizer='adam'):
     # model.summary()
     return model
 
-if __name__ == "__main__":
-    
+def train_model(df):
+    """ Train multiple models with different params
+    Args:
+        df (`DataFrame`): DataFrame used to train the model
+    """
+    data=df.copy()
     logging.config.fileConfig(config.LOGGING_CONFIG)
     logger = logging.getLogger('model_training')
 
-    data = pd.read_csv(config.PROJECT_HOME+"/data/jobposting_cleaned.csv")
     logger.info("The shape of the data is {} ".format(data.shape))
 
     # feature engineering
@@ -48,7 +56,7 @@ if __name__ == "__main__":
     model = scikit_learn.KerasClassifier(build_fn=create_model, input_dim=X_train_OH.shape[1], verbose=0)
 
     # get params space from model_config.yml file
-    with open('model_config.yml', 'r') as f: 
+    with open(os.path.join(config.PROJECT_HOME, 'model','src','model_config.yml'), 'r') as f: 
         params_training = yaml.load(f)
 
     batch_size = params_training["model_tuning"]["batch_size"]
@@ -68,3 +76,9 @@ if __name__ == "__main__":
     params = grid_result.cv_results_['params']
     for mean, std, param in zip(means, stds, params):
         logger.info("%f (%f) with: %r" % (mean, std, param))
+
+if __name__ == "__main__":
+    data = pd.read_csv(config.DATA_CLEANED_PATH)
+    train_model(data)
+    
+    

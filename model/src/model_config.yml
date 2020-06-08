@@ -12,6 +12,6 @@ model_tuning:
 
 model_production:
     optimizer: "adam"
-    epochs: 30
+    epochs: 60
     batch_size: 16
             
