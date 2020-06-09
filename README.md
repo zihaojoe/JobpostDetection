@@ -194,14 +194,14 @@ docker build -f Dockerfile -t jobpostmodel .
 ```
 
 ##### 3.2 Run the model generation pipeline
-###### 3.2.1 The full pipeline
-```bash
-docker run --mount type=bind,source="$(pwd)",target=/JobpostDetection/model --env-file config/s3.env jobpostmodel sh pipeline.sh
-```
-
 ###### 3.2.1 The demo pipeline (skipping data cleaning and grid search)
 ```bash
 docker run --mount type=bind,source="$(pwd)",target=/JobpostDetection/model --env-file config/s3.env jobpostmodel sh pipeline_demo.sh
+```
+
+###### 3.2.2 The full pipeline
+```bash
+docker run --mount type=bind,source="$(pwd)",target=/JobpostDetection/model --env-file config/s3.env jobpostmodel sh pipeline.sh
 ```
 
 ##### 3.3 Build the model step-by-step (Reference Only)
