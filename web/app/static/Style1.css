@@ -128,3 +128,41 @@ vertical-align: top;
   color: white;
 }
 
+.Home {
+  border-radius: 4px;
+  background-color: #6495ED;
+  border: none;
+  color: white;
+  text-align: center;
+  font-size: 18px;
+  padding: 12px;
+  width: 120px;
+  transition: all 0.5s;
+  cursor: pointer;
+  margin: 5px;
+  position: absolute;
+  top: 20px;
+  left: 50px;
+}
+.Home span {
+  cursor: pointer;
+  display: inline-block;
+  position: relative;
+  transition: 0.5s;
+}
+.Home span:after {
+  content: '\00bb';
+  position: absolute;
+  opacity: 0;
+  top: 0;
+  right: -20px;
+  transition: 0.5s;
+}
+.Home:hover span {
+  padding-right: 25px;
+}
+.Home:hover span:after {
+  opacity: 1;
+  right: 0;
+}
+

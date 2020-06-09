@@ -92,6 +92,8 @@ def predict():
         #print("The predicted value is ", predict_value)
         #print("The result is ", result)
 
+        predict_value = round(predict_value, 3)
+
         sample = Reported_case(telecommuting=0, has_company_logo=feature['has_company_logo'][0], required_education=feature['required_education'][0],
             has_questions=feature['has_questions'][0], employment_type=feature['employment_type'][0], required_experience=feature['required_experience'][0], 
             industry=feature['industry'][0], function=feature['function'][0], country=feature['telecommuting'][0], 
