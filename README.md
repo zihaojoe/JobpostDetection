@@ -3,7 +3,7 @@
 - **QA: Zach Zhu**
 - [Charter](#project-charter)
 - [Backlog](#backlog)
-- [How to run?](#how-to-run?)
+- [How to run?](#how-to-run)
 
 ## Project charter
 ### Vision
@@ -103,14 +103,14 @@ The success criteria can be divided into business measures and model performance
 * Initiative2.epic3.story1  
 * Initiative2.epic3.story2
 
-## How to run?
+## How to run
 * For midpoint, please check Module 1 and Module 2
 * For final, please check Module 3 and Module 4
 
-- [Module 1: Data Ingestion](#module-1)
-- [Module 2: Database Set up](#module-2)
-- [Module 3: Build the model](#module-3)
-- [Module 4: Run the App](#module-4)
+- [Module 1: Data Ingestion](#module-1-data-ingestion)
+- [Module 2: Database Set up](#module-2-database-set-up)
+- [Module 3: Build the model](#module-3-build-the-model)
+- [Module 4: Run the App](#module-4-run-the-app)
 
 ### Module 1: Data Ingestion
 The dataset can be downloaded from [Kaggle](https://www.kaggle.com/shivamb/real-or-fake-fake-jobposting-prediction). It contains 17880 job posting records and is around 50MB in size. The dataset is downloaded to JobpostDetection/model/jobposting.csv
