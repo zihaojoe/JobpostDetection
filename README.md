@@ -184,14 +184,14 @@ docker run --mount type=bind,source="$(pwd)"/web/data,target=/JobpostDetection/w
 * The insturctor user and qa user account can only select from the current RDS instance. If you are running the app in a development environment, you have to set the MySQL database with your own RDS instance. 
 
 ### Module 3: Build the model
-#### 1. Follow Module 1 Part 1 to set up AWS environment.
+#### 1. Follow Module 1 Part 1 to set up AWS environment. (If you are using -e to pass environment variables to docker run instead of env file, just skip this.)
 
 #### 2. Build Docker image (If you have built it in Module 1, just skip this step).
 Go to the root directory of the project, and run: 
 ```bash
 cd model/
 ```
-Notice: All the following command of this part should be run under `model` 
+**Notice**: All the following command of this part should be run under `model` 
 ```bash
 docker build -f Dockerfile -t jobpostmodel .
 ```
@@ -199,7 +199,7 @@ docker build -f Dockerfile -t jobpostmodel .
 #### 3. Run the model generation pipeline
 ##### 3.1 The demo pipeline (Recommended, skipping data cleaning and grid search)
 ```bash
-docker run --mount type=bind,source="$(pwd)",target=/JobpostDetection/model --env-file config/s3.env jobpostmodel sh pipeline_demo.sh
+docker run --mount type=bind,source="$(pwd)",target=/JobpostDetection/model -e AWS_ACCESS_KEY_ID -e AWS_SECRET_ACCESS_KEY jobpostmodel sh pipeline_demo.sh
 ```
 
 ##### 3.2 The full pipeline
@@ -239,7 +239,7 @@ docker run --mount type=bind,source="$(pwd)",target=/JobpostDetection/model/ job
 ```
 
 ### Module 4: Run the App
-#### 1. Follow Module 2 Part 1 to set up RDS environment.
+#### 1. Follow Module 2 Part 1 to set up RDS environment.(If you are using -e to pass environment variables to docker run instead of env file, just skip this.)
 #### 2. Build Docker image (If you have built it in Module 2, just skip this step).
 Go to the root directory of the project, and run:
 ```bash
@@ -248,12 +248,13 @@ docker build -f Dockerfile -t jobpostweb .
 #### 3. Run the app in the backend 
 Stay in the root directory of the project, and run:
 ```bash
-docker run -p 5000:5000 --mount type=bind,source="$(pwd)"/web/data,target=/JobpostDetection/web/data --env-file web/config/database.env jobpostweb python3 app.py --sqlite
+docker run -p 5000:5000 -e MYSQL_USER -e MYSQL_PASSWORD jobpostweb python3 app.py
+or 
+docker run -p 5000:5000 --mount type=bind,source="$(pwd)"/web/data,target=/JobpostDetection/web/data jobpostweb python3 app.py --sqlite
 ```
-
 **Notice: you can provide up to 1 parameters to the docker run command**   
 --sqlite: If given, connect to local sqlite rather than mysql on RDS. If not given, connect to RDS MySQL. 
-* If you are using MySQL, you have to set all the settings with your own RDS instance. (Need to be connected to Northwestern VPN).
+* If you are using MySQL, you have to need to be connected to Northwestern VPN.
 
 
 ##### 3. Check the web app

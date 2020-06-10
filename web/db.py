@@ -49,10 +49,14 @@ if __name__ == "__main__":
 	conn_type = "mysql+pymysql"
 	user = os.environ.get("MYSQL_USER")
 	password = os.environ.get("MYSQL_PASSWORD")
-	host = os.environ.get("MYSQL_HOST")
-	port = os.environ.get("MYSQL_PORT")
-	database = os.environ.get("DATABASE_NAME")
-	sqlitehost = os.environ.get("SQLITE")
+	#host = os.environ.get("MYSQL_HOST")
+	#port = os.environ.get("MYSQL_PORT")
+	#database = os.environ.get("DATABASE_NAME")
+	#sqlitehost = os.environ.get("SQLITE")
+	host = "nw-msia423-joe.c7e9ftl52ogd.us-east-2.rds.amazonaws.com"
+	port = 3306
+	database = "msia423_project_db"
+	sqlitehost = "sqlite:///data/msia423_project_db.db"
 
 	if args.sqlite:
 		engine_string = sqlitehost

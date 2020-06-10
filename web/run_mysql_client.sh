@@ -6,8 +6,6 @@
 # -u${MYSQL_USER} # username used by command `mysql` \
 # -p${MYSQL_PASSWORD}  # password used by command `mysql` 
 
-source .mysqlconfig
-
 docker run -it \
 --rm \
 mysql:latest \

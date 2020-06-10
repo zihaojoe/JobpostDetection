@@ -35,10 +35,9 @@ parser.add_argument("--sqlite", "-q", default=False, action="store_true",
 args = parser.parse_args()
 
 if args.sqlite:
-    sqlitehost = os.environ.get("SQLITE")
+    #sqlitehost = os.environ.get("SQLITE")
+    sqlitehost = "sqlite:///data/msia423_project_db.db"
     app.config['SQLALCHEMY_DATABASE_URI'] = sqlitehost
-
-#print(app.config['SQLALCHEMY_DATABASE_URI'])
 
 db = SQLAlchemy(app)
 
@@ -83,11 +82,14 @@ def predict():
             
         if predict_value < 0.5:
             result = "Real"
+            label=0
             predict_value = 1 - predict_value
         elif predict_value >= 0.5 :
             result = "Fake"
+            label=1
         else:
             result = "Invalid Input"
+            label=1
 
         #print("The predicted value is ", predict_value)
         #print("The result is ", result)
@@ -97,7 +99,7 @@ def predict():
         sample = Reported_case(telecommuting=0, has_company_logo=feature['has_company_logo'][0], required_education=feature['required_education'][0],
             has_questions=feature['has_questions'][0], employment_type=feature['employment_type'][0], required_experience=feature['required_experience'][0], 
             industry=feature['industry'][0], function=feature['function'][0], country=feature['telecommuting'][0], 
-            salary_low=feature['salary_low'][0], salary_high=feature['salary_high'][0], text=feature['text'][0], fraudulent=int(predict_value))
+            salary_low=feature['salary_low'][0], salary_high=feature['salary_high'][0], text=feature['text'][0], fraudulent=int(label))
 
         db.session.add(sample)
         db.session.commit()
