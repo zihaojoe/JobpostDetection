@@ -62,7 +62,7 @@ if __name__ == "__main__":
 		engine_string = sqlitehost
 	else:
 		engine_string = "{}://{}:{}@{}:{}/{}".format(conn_type, user, password, host, port, database)
-
+		engine_string = os.environ.get("SQLALCHEMY_DATABASE_URI")
 	# set up mysql connection
 	engine = sql.create_engine(engine_string)
 

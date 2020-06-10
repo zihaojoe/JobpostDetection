@@ -254,8 +254,9 @@ docker build -f Dockerfile -t jobpostweb .
 #### 3. Run the app in the backend 
 Stay in the root directory of the project, and run:
 ```bash
-docker run -p 5000:5000 -e MYSQL_USER -e MYSQL_PASSWORD jobpostweb python3 app.py
+docker run -p 5000:5000 -e SQLALCHEMY_DATABASE_URI jobpostweb python3 app.py
 ```
+where you should export `SQLALCHEMY_DATABASE_URI` as `mysql+pymysql://msia423instructor:zzu8431@nw-msia423-joe.c7e9ftl52ogd.us-east-2.rds.amazonaws.com:3306/msia423_project_db`
 or 
 ```bash
 docker run -p 5000:5000 --mount type=bind,source="$(pwd)"/web/data,target=/JobpostDetection/web/data jobpostweb python3 app.py --sqlite
