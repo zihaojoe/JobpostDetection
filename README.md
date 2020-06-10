@@ -3,6 +3,7 @@
 - **QA: Zach Zhu**
 - [Charter](#project-charter)
 - [Backlog](#backlog)
+- [How to run?](#how-to-run?)
 
 ## Project charter
 ### Vision
@@ -106,6 +107,11 @@ The success criteria can be divided into business measures and model performance
 * For midpoint, please check Module 1 and Module 2
 * For final, please check Module 3 and Module 4
 
+- [Module 1: Data Ingestion](#module-1)
+- [Module 2: Database Set up](#module-2)
+- [Module 3: Build the model](#module-3)
+- [Module 4: Run the App](#module-4)
+
 ### Module 1: Data Ingestion
 The dataset can be downloaded from [Kaggle](https://www.kaggle.com/shivamb/real-or-fake-fake-jobposting-prediction). It contains 17880 job posting records and is around 50MB in size. The dataset is downloaded to JobpostDetection/model/jobposting.csv
 
@@ -204,14 +210,14 @@ docker run --mount type=bind,source="$(pwd)",target=/JobpostDetection/model -e A
 
 ##### 3.2 The full pipeline
 ```bash
-docker run --mount type=bind,source="$(pwd)",target=/JobpostDetection/model --env-file config/s3.env jobpostmodel sh pipeline.sh
+docker run --mount type=bind,source="$(pwd)",target=/JobpostDetection/model -e AWS_ACCESS_KEY_ID -e AWS_SECRET_ACCESS_KEY jobpostmodel sh pipeline.sh
 ```
 
 #### 4. Build the model step-by-step (Reference Only)
 ##### 4.1 Download data
 Run the following command to download data from S3 (previously uploaded in module 1). You can skip this if you've already had the data in the data folder. 
 ```bash
-docker run --mount type=bind,source="$(pwd)",target=/JobpostDetection/model --env-file config/s3.env jobpostmodel sh download_data.sh
+docker run --mount type=bind,source="$(pwd)",target=/JobpostDetection/model -e AWS_ACCESS_KEY_ID -e AWS_SECRET_ACCESS_KEY jobpostmodel sh download_data.sh
 ```
 
 ##### 4.2 Data Cleaning
@@ -249,7 +255,9 @@ docker build -f Dockerfile -t jobpostweb .
 Stay in the root directory of the project, and run:
 ```bash
 docker run -p 5000:5000 -e MYSQL_USER -e MYSQL_PASSWORD jobpostweb python3 app.py
+```
 or 
+```bash
 docker run -p 5000:5000 --mount type=bind,source="$(pwd)"/web/data,target=/JobpostDetection/web/data jobpostweb python3 app.py --sqlite
 ```
 **Notice: you can provide up to 1 parameters to the docker run command**   
