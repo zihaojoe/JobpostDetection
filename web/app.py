@@ -38,7 +38,7 @@ if args.sqlite:
     sqlitehost = os.environ.get("SQLITE")
     app.config['SQLALCHEMY_DATABASE_URI'] = sqlitehost
 
-print(app.config['SQLALCHEMY_DATABASE_URI'])
+#print(app.config['SQLALCHEMY_DATABASE_URI'])
 
 db = SQLAlchemy(app)
 
@@ -78,7 +78,7 @@ def predict():
         }
 
         feature_df = pd.DataFrame(feature)
-        print(feature)
+        #print(feature)
         predict_value = ModelPredict.predict_fake_post(feature_df)[0]
             
         if predict_value < 0.5:

@@ -47,10 +47,16 @@ def modeldump(df, sav_path=None):
 		y_pred = model.predict(X_test_OH)
 
 		cm = confusion_matrix(y_test, y_pred)
-		print("Size of input:", X_test_OH.shape)
-		print("The confusion matrix on the test data is as follows:")
-		print(cm)
 
+		with open (sav_path+'result.txt', 'w') as f:
+			f.write("Size of input: {0}\n".format(X_test_OH.shape[1]))
+			f.write("The confusion matrix on the test data is as follows:\n")
+			f.write(str(cm))
+			f.write("\n")
+
+		#print("Size of input:", X_test_OH.shape)
+		#print("The confusion matrix on the test data is as follows:")
+		#print(cm)
 
 	y = data['fraudulent'].copy()
 	X = data.drop(['fraudulent'], axis=1)
@@ -67,9 +73,12 @@ def modeldump(df, sav_path=None):
 		y_pred = model.predict(X)
 
 		cm = confusion_matrix(y, y_pred)
-		print("Size of input:", X.shape)
-		print("The confusion matrix on the training data is as follows:")
-		print(cm)
+
+		with open (sav_path+'result.txt', 'a') as f:
+			f.write("Size of input: {0}\n".format(X.shape[1]))
+			f.write("The confusion matrix on the training data is as follows:\n")
+			f.write(str(cm))
+			f.write("\n")
 
 		model.model.save_weights(sav_path+'model_file.ckpt')
 

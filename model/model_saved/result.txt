@@ -1,0 +1,8 @@
+Size of input: 917
+The confusion matrix on the test data is as follows:
+[[21  8]
+ [ 3  0]]
+Size of input: 1042
+The confusion matrix on the training data is as follows:
+[[96  0]
+ [ 2  5]]

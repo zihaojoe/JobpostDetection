@@ -34,22 +34,19 @@ def test_data_cleaning_additional_col():
 def test_model_prediction_all():
 	test_input = pd.read_csv("unit_test/target/jobposting_cleaned.csv")[0:1]
 	result = mp.predict_fake_post(test_input)
-	assert result==0
+	assert ((result[0]>=0) & (result[0]<=1))
 
 # happy path for model prediction, additional features
 def test_model_prediction_additional_features():
 	test_input = pd.read_csv("unit_test/target/jobposting_cleaned.csv")[0:1]
 	test_input['aaa'] = 0
 	result = mp.predict_fake_post(test_input)
-	assert result==0
+	assert ((result[0]>=0) & (result[0]<=1))
 
 # unhappy path for model prediction, missing features
 def test_model_prediction_missing_features():
 	test_input = pd.read_csv("unit_test/target/jobposting_cleaned.csv")[0:1]
 	test_input.drop('telecommuting', axis=1, inplace=True)
 	result = mp.predict_fake_post(test_input)
-	assert result==None
-
-
-
+	assert result==0
 

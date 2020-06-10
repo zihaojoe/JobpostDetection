@@ -8,7 +8,7 @@ for i in range(3):
 		break;
 	else:
 		cwd = os.path.dirname(cwd)
-print(PROJECT_HOME)
+#print(PROJECT_HOME)
 
 # App config
 APP_NAME = "Job Posting"

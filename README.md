@@ -102,9 +102,9 @@ The success criteria can be divided into business measures and model performance
 * Initiative2.epic3.story1  
 * Initiative2.epic3.story2
 
-## Documentation
-
 ## How to run?
+* For midpoint, please check Module 1 and Module 2
+* For final, please check Module 3 and Module 4
 
 ### Module 1: Data Ingestion
 The dataset can be downloaded from [Kaggle](https://www.kaggle.com/shivamb/real-or-fake-fake-jobposting-prediction). It contains 17880 job posting records and is around 50MB in size. The dataset is downloaded to JobpostDetection/model/jobposting.csv
@@ -154,7 +154,7 @@ vi database.env
 **Notice:** 
 * If you want to use MySQL, you can ignore the `SQLITE` variable. On the contrast, if you want to use SQLite, just set `SQLITE` and ignore all the others.
 * Verify that you are on the northwestern vpn before you continue on with MySQL.
-* Follow the following docker commands to differentiate between local SQLite and MySQL.
+* Follow the docker commands to differentiate between local SQLite and MySQL.
 
 #### 2. Run the Docker to upload data to S3 bucket  
 
@@ -181,75 +181,82 @@ docker run --mount type=bind,source="$(pwd)"/web/data,target=/JobpostDetection/w
 ##### 2.3 Query data
 * For instructor, you can use `MYSQL_USER=msia423instructor` and `MYSQL_PASSWORD=zzu8431` to perform queries to the table. 
 * For QA, you can use `MYSQL_USER=msia423qa` and `MYSQL_PASSWORD=zzu8431` to perform queries to the table. 
+* The insturctor user and qa user account can only select from the current RDS instance. If you are running the app in a development environment, you have to set the MySQL database with your own RDS instance. 
 
 ### Module 3: Build the model
-##### 3.1 Build Docker image (If you have built it in Module 1, just skip this step).
+#### 1. Follow Module 1 Part 1 to set up AWS environment.
+
+#### 2. Build Docker image (If you have built it in Module 1, just skip this step).
 Go to the root directory of the project, and run: 
 ```bash
 cd model/
 ```
-Notice: All the following command of this part should be run under model 
+Notice: All the following command of this part should be run under `model` 
 ```bash
 docker build -f Dockerfile -t jobpostmodel .
 ```
 
-##### 3.2 Run the model generation pipeline
-###### 3.2.1 The demo pipeline (skipping data cleaning and grid search)
+#### 3. Run the model generation pipeline
+##### 3.1 The demo pipeline (Recommended, skipping data cleaning and grid search)
 ```bash
 docker run --mount type=bind,source="$(pwd)",target=/JobpostDetection/model --env-file config/s3.env jobpostmodel sh pipeline_demo.sh
 ```
 
-###### 3.2.2 The full pipeline
+##### 3.2 The full pipeline
 ```bash
 docker run --mount type=bind,source="$(pwd)",target=/JobpostDetection/model --env-file config/s3.env jobpostmodel sh pipeline.sh
 ```
 
-##### 3.3 Build the model step-by-step (Reference Only)
-###### 3.3.1 Download data
+#### 4. Build the model step-by-step (Reference Only)
+##### 4.1 Download data
 Run the following command to download data from S3 (previously uploaded in module 1). You can skip this if you've already had the data in the data folder. 
 ```bash
 docker run --mount type=bind,source="$(pwd)",target=/JobpostDetection/model --env-file config/s3.env jobpostmodel sh download_data.sh
 ```
 
-###### 3.3.2 Data Cleaning
+##### 4.2 Data Cleaning
 Run the following command to clean the data. Since it may take hours to parse the text, the cleaned data has been uploaded to S3 and you want to download it using the command in 3.2. Once you have downloaded, you can skip the following command.
 ```bash
 docker run --mount type=bind,source="$(pwd)",target=/JobpostDetection/model/ jobpostmodel python3 src/DataCleaning.py 
 ```
 
-###### 3.3.3 Model Training
+##### 4.3 Model Training
 Run the following command to train the models (model parameters are in model_config.yml), and find the best model. Model performance is saved to src/model_training.log.
 ```bash
 docker run --mount type=bind,source="$(pwd)",target=/JobpostDetection/model/ jobpostmodel python3 src/ModelTraining.py 
 ```
 
-###### 3.3.4 Model Dumping
+##### 4.4 Model Dumping
 Run the following command to train the best model (model parameters are in model_config.yml) and save it to file.
 ```bash
 docker run --mount type=bind,source="$(pwd)",target=/JobpostDetection/model/ jobpostmodel python3 src/ModelDump.py 
 ```
 
-##### 3.4 Model Unit Test
+#### 5. Model Unit Test
 Run the following command to conduct unit test.
 ```bash
 docker run --mount type=bind,source="$(pwd)",target=/JobpostDetection/model/ jobpostmodel pytest unit_test/
 ```
 
 ### Module 4: Run the App
-##### 4.1 Build Docker image (If you have built it in Module 2, just skip this step).
+#### 1. Follow Module 2 Part 1 to set up RDS environment.
+#### 2. Build Docker image (If you have built it in Module 2, just skip this step).
+Go to the root directory of the project, and run:
 ```bash
 docker build -f Dockerfile -t jobpostweb .
 ```
-##### 4.2 Run the app in the backend
-Go to the root directory of the project, and run: 
+#### 3. Run the app in the backend 
+Stay in the root directory of the project, and run:
 ```bash
 docker run -p 5000:5000 --mount type=bind,source="$(pwd)"/web/data,target=/JobpostDetection/web/data --env-file web/config/database.env jobpostweb python3 app.py --sqlite
 ```
 
-**Notice: you can provide up to 1 parameters to the docker run command** 
---sqlite: If given, connect to local sqlite rather than mysql on RDS. If not given, connect to RDS MySQL. (Need to be connected to Northwestern VPN)
+**Notice: you can provide up to 1 parameters to the docker run command**   
+--sqlite: If given, connect to local sqlite rather than mysql on RDS. If not given, connect to RDS MySQL. 
+* If you are using MySQL, you have to set all the settings with your own RDS instance. (Need to be connected to Northwestern VPN).
 
-##### 4.3 Check the web app
+
+##### 3. Check the web app
 You should now be able to access the app at <http://0.0.0.0:5000/> in your browser.
 
 ### Module 5: Kill the container
@@ -262,48 +269,74 @@ where `test` is the name given in the `docker run` command.
 
 ## Repo Structure
 ```
-JobpostDetection
-├── README.md
-├── model
-│   ├── Dockerfile
-│   ├── config
-│   │   ├── logging.conf
-│   │   └── s3.env
-│   ├── data
-│   │   ├── jobposting.csv
-│   │   └── jobposting_cleaned.csv
-│   ├── model
-│   │   ├── OH_file.pickle
-│   │   ├── SD_file.pickle
-│   │   ├── model_file.pickle
-│   │   └── vec_file.pickle
-│   ├── nltk_data
-│   │   ├── corpora
-│   │   │   ├── stopwords
-│   │   │   └── wordnet
-│   │   └── taggers
-│   │       └── averaged_perceptron_tagger
-│   │           └── averaged_perceptron_tagger.pickle
-│   ├── requirements.txt
-│   ├── src
-│   │   ├── DataCleaning.py
-│   │   ├── FeatureEngineering.py
-│   │   ├── FeatureEngineeringPred.py
-│   │   ├── ModelDump.py
-│   │   ├── ModelPredict.py
-│   │   ├── ModelTraining.py
-│   │   ├── config.py
-│   │   ├── model_config.yml
-│   │   └── model_training.log
-│   └── upload_data.sh
-└── web
-    ├── Dockerfile
-    ├── config
-    │   ├── database.env
-    │   └── logging.conf
-    ├── data
-    │   └── msia423_project_db.db
-    ├── db.py
-    ├── mysql_database.log
-    └── requirements.txt
+├─ Dockerfile
+├─ README.md
+├─ backup
+│    ├─ code
+│    │    ├─ DataCleaning-v1.py
+│    │    └─ DataCleaning-v2.py
+│    ├─ jobposting.csv
+│    ├─ jobposting_cleaned.csv
+│    └─ model
+│           ├─ OH_file.pickle
+│           ├─ SD_file.pickle
+│           ├─ input_size.txt
+│           ├─ model_file.ckpt
+│           └─ vec_file.pickle
+├─ deliverable
+│    └─ FinalPre_MSiA423.pptx
+├─ model
+│    ├─ Dockerfile
+│    ├─ config
+│    │    ├─ logging.conf
+│    │    └─ s3.env
+│    ├─ data
+│    │    ├─ jobposting.csv
+│    │    └─ jobposting_cleaned.csv
+│    ├─ download_data.sh
+│    ├─ model_saved
+│    │    ├─ OH_file.pickle
+│    │    ├─ SD_file.pickle
+│    │    ├─ input_size.txt
+│    │    ├─ model_file.ckpt
+│    │    ├─ result.txt
+│    │    └─ vec_file.pickle
+│    ├─ nltk_data
+│    │    ├─ corpora
+│    │    └─ taggers
+│    ├─ pipeline.sh
+│    ├─ pipeline_demo.sh
+│    ├─ requirements.txt
+│    ├─ src
+│    │    ├─ DataCleaning.py
+│    │    ├─ FeatureEngineering.py
+│    │    ├─ FeatureEngineeringPred.py
+│    │    ├─ ModelDump.py
+│    │    ├─ ModelPredict.py
+│    │    ├─ ModelTraining.py
+│    │    ├─ __init__.py
+│    │    ├─ config.py
+│    │    ├─ model_config.yml
+│    │    └─ model_training.log
+│    ├─ unit_test
+│    │    ├─ __pycache__
+│    │    ├─ input
+│    │    ├─ target
+│    │    └─ test_model.py
+│    └─ upload_data.sh
+├─ requirements.txt
+└─ web
+       ├─ app
+       │    ├─ static
+       │    └─ templates
+       ├─ app.py
+       ├─ config
+       │    ├─ database.env
+       │    ├─ flaskconfig.py
+       │    └─ logging.conf
+       ├─ data
+       │    └─ msia423_project_db.db
+       ├─ db.py
+       ├─ mysql_database.log
+       └─ run_mysql_client.sh
 ```
