@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <!-- Add tittle -->
+        <title>AVCProject</title>
+
+        <!-- Add css and import d3 -->
+        <link rel="stylesheet" type="text/css" media="screen" href="static/Style1.css" />
+        <link rel="stylesheet" type="text/css" media="screen" href="Style1.css" />
+
+    </head>
+    <body>
+        <!-- Header -->
+        <header>
+            <div id="titlebackground">
+                <div id="title">Job Posting Detection APP</div>
+            </div>
+
+            <form action="{{url_for('predict')}}" method=POST class=predict id="forminput">
+              <form action="/output" method=POST>
+                <label for="Telecommuting" >Telecommuting:</label>
+                <input type="radio" name="Telecommuting" value="1" checked="true">Yes&#160&#160&#160&#160 
+                <input type="radio" name="Telecommuting" value="0">No&#160&#160&#160&#160&#160&#160&#160&#160<br>
+
+                <label for="Has_Logo" >Has_Logo:</label>
+                <input type="radio" name="Has_Logo" value="1" checked="true">Yes&#160&#160&#160&#160
+                <input type="radio" name="Has_Logo" value="0">No&#160&#160&#160&#160&#160&#160&#160&#160<br>
+
+                <label for="Has_Questions" >Has_Questions:</label>
+                <input type="radio" name="Has_Questions" value="1" checked="true">Yes&#160&#160&#160&#160
+                <input type="radio" name="Has_Questions" value="0">No&#160&#160&#160&#160&#160&#160&#160&#160<br>
+
+                <label for="Employment_Type" >Employment_Type:</label>
+                <select name="Employment_Type" style="width:130px">
+                <option value="Contract">Contract</option>
+                <option value="Full-time">Full-time</option>
+                <option value="Part-time">Part-time</option>
+                <option value="Temporary">Temporary</option>
+                <option value="Other">Other</option>
+                <option value="Unspecified">Unspecified</option>
+                </select><br>
+
+                <label for="Required_Experience" >Required_Experience:</label>
+                <select name="Required_Experience" style="width:130px">
+                <option value="Internship">Internship</option>
+                <option value="Entry level">Entry level</option>
+                <option value="Associate">Associate</option>
+                <option value="Mid-Senior level">Mid-Senior</option>
+                <option value="Director">Director</option>
+                <option value="Executive">Executive</option>
+                <option value="Unspecified">Unspecified</option>
+                </select><br>
+
+                <label for="Required_Education" >Required_Education:</label>
+                <select name="Required_Education" style="width:130px">
+                <option value="High School or equivalent">High School</option>
+                <option value="Certification">Certification</option>
+                <option value="Bachelor">Bachelor</option>
+                <option value="Associate Degree">Associate</option>
+                <option value="Master or higher">Master</option>
+                <option value="Other">Other</option>
+                <option value="Unspecified">Unspecified</option>
+                </select><br>
+
+                <label for="Industry" >Industry:</label>
+                <select name="Industry" style="width:130px">
+                <option value="Computer Software">Software</option>
+                <option value="Education Management">Education</option>
+                <option value="Financial Services">Financial</option>
+                <option value="Information Technology and Services">IT</option>
+                <option value="Internet">Internet</option>
+                <option value="Marketing and Advertising">Marketing</option>
+                <option value="Other">Other</option>
+                <option value="Unspecified">Unspecified</option>
+                </select><br>
+
+                <label for="Function" >Function:</label>
+                <select name="Function" style="width:130px">
+                <option value="Administrative">Administrative</option>
+                <option value="Customer Service">Customer</option>
+                <option value="Engineering">Engineering</option>
+                <option value="Information Technology">IT</option>
+                <option value="Marketing">Marketing</option>
+                <option value="Sales">Sales</option>
+                <option value="Other">Other</option>
+                <option value="Unspecified">Unspecified</option>
+                </select><br>
+
+                <label for="Country" >Country:</label>
+                <select name="Country" style="width:130px">
+                <option value="US">United States</option>
+                <option value="Other">Other</option>
+                <option value="Unknown">Unknown</option>
+                </select><br>
+
+                <label for="Salary_Low" >Salary_Low:</label>
+                <input type="text" name="Salary_Low" value=0><br>
+
+                <label for="Salary_High" >Salary_High:</label>
+                <input type="text" name="Salary_High" value=0><br>
+
+                <label for="Text" >Text:</label>
+                <textarea required name="Text" style="height:50px; word-break:keep-all; width:125px" form="forminput" maxlength=5000></textarea><br>
+
+                <input id="button1" type="reset" value="Reset">
+                <input id="button2" type="submit" value="Submit">
+              </form>
+            </form>
+
+            <button class="Home" onclick="window.location.href='{{url_for('home')}}'"><span>Home </span></button>
+
+            <!-- Prediction Result -->
+            <div id="Result_title"> The posting is predicted to be: {{result}}</div>
+            <div id="Result_prob_title"> With the probability of: {{result_prob}}</div>
+
+        </header>
+        <!-- End of Header -->
+
+    </body>
+</html> 
